@@ -7,11 +7,17 @@
 
 import UIKit
 
+protocol UserCellDelegate: AnyObject {
+    func userButtonTapped(sender: UIButton)
+}
+
 final class ProfileCell: UITableViewCell,ReusebleTableView {
     @IBOutlet private weak var userImageView: UIImageView!
     @IBOutlet private weak var nameLabel: UILabel!
     @IBOutlet private weak var repoLabel: UILabel!
-        
+    
+    var delegate: UserCellDelegate?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         config()
@@ -23,10 +29,23 @@ final class ProfileCell: UITableViewCell,ReusebleTableView {
         contentView.clipsToBounds = true
     }
     
-    func configCell(user: User) {
-        userImageView.image = UIImage(named: user.avatar)
-        nameLabel.text = user.name
-        repoLabel.text = user.reposURL
+    @IBAction private func handleDetailButton(_ sender: UIButton) {
+        delegate?.userButtonTapped(sender: sender)
+    }
+    
+    func configCell(account: Account) {
+        loadImage(image: account.avatarURL)
+        nameLabel.text = account.login
+        let attributedText = NSAttributedString(string: account.htmlURL, attributes: [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue])
+        repoLabel.attributedText = attributedText
+    }
+    
+    private func loadImage(image: String) {
+        APIRepository.shared.loadImage(stringURL: image) { (data: Data) in
+            DispatchQueue.main.async { [weak self] in
+                self?.userImageView.image = UIImage(data: data)
+            }
+        }
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

@@ -11,4 +11,6 @@ struct User {
     let avatar: String
     let name: String
     let reposURL: String
+    var profileURL: String
+    var followersURL: String
 }

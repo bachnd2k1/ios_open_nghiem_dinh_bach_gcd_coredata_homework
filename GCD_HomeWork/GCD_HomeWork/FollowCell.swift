@@ -24,10 +24,18 @@ final class FollowCell: UITableViewCell, ReusebleTableView {
         contentView.clipsToBounds = true
     }
     
-    func configCell(user: User) {
-        userImageView.image = UIImage(named: user.avatar)
-        nameLabel.text = user.name
-        repoLabel.text = user.reposURL
+    func configCell(account: Account) {
+        loadImage(image: account.avatarURL)
+        nameLabel.text = account.login
+        repoLabel.text = account.htmlURL
+    }
+    
+    private func loadImage(image: String) {
+        APIRepository.shared.loadImage(stringURL: image) { (data: Data) in
+            DispatchQueue.main.async { [weak self] in
+                self?.userImageView.image = UIImage(data: data)
+            }
+        }
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

@@ -10,7 +10,6 @@ import Foundation
 
 extension UITableView {
     func dequeueReusableCell<T: UITableViewCell>(_ type: T.Type) -> T where T: ReusebleTableView {
-        print(T.reuseIdentifier)
         guard let cell =  self.dequeueReusableCell(withIdentifier: T.reuseIdentifier) as? T else {
             fatalError("Could not dequeue cell with identifier: \(T.reuseIdentifier)")
         }
